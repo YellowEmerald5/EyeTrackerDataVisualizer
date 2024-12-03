@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Objects;
 
 public class MovementScript : MonoBehaviour
 {
@@ -82,7 +83,7 @@ public class MovementScript : MonoBehaviour
     {
         var timestamp = _pointIDs[_currentPosition];
         //Change when structure and id type in objecttracking is known
-        var aoisize = Object.Aois.AoiSizes.Where(a => a.Id == timestamp);
+        //var aoisize = Object.Aois.AoiSizes.Where(a => a.Id == timestamp);
         
     }
 }
