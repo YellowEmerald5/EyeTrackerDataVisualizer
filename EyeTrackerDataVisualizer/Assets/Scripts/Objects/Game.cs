@@ -1,25 +1,29 @@
 ﻿using System.Collections.Generic;
-//using LinqToDB.Mapping;
+using LinqToDB.Mapping;
 
 namespace Objects
 {
     public class Game
     {
-        //[PrimaryKey]
+        [PrimaryKey]
         public int Id { get; set; }
-        //[NotNull]
+        [NotNull]
         public int TimesPlayed { get; }
-        //[NotNull]
+        [NotNull]
         public int SessionId { get; set; }
-        //[NotNull,Column(Length = 100)]
+        [NotNull,Column(Length = 100)]
         public string Name { get; }
         
-        //[Nullable]
+        [Nullable]
         public List<ObjectInGame> Objects { get; }
+        
+        [Nullable]
+        public int AmountOfGamesPlayed { get; set; }
         
         public Game(int timesPlayed, int amountOfGamesPlayed,string name, int userId, int sessionId)
         {
             TimesPlayed = timesPlayed;
+            AmountOfGamesPlayed = amountOfGamesPlayed;
             Name = name;
             SessionId = sessionId;
             var idString = $"{userId}{sessionId}{amountOfGamesPlayed}{timesPlayed}";

@@ -1,30 +1,30 @@
 using System.Collections.Generic;
-//using LinqToDB.Mapping;
+using LinqToDB.Mapping;
 using UnityEngine;
 
 namespace Objects
 {
     public class Aoi
     {
-        //[PrimaryKey,Column(Length = 100)]
+        [PrimaryKey,Column(Length = 100)]
         public string Id { get; set; }
-        //[NotNull,Column(Length = 100)]
+        [NotNull,Column(Length = 100)]
         public string ObjectName { get; set; }
-        //[Nullable]
+        [Nullable]
         public List<AoiOrigin> Origins { get; set; }
-        //[Nullable]
+        [Nullable]
         public List<AoiSize> Sizes { get; set; }
-        //[NotNull]
+        [NotNull]
         public long TimeSpawn { get; set; }
-        //[NotNull]
+        [NotNull]
         public long TimeDestroy { get; set; }
-        //[NotNull]
+        [NotNull]
         public float StartPositionX { get; set; }
-        //[NotNull]
+        [NotNull]
         public float StartPositionY { get; set; }
-        //[NotNull]
+        [NotNull]
         public float EndPositionX { get; set; }
-        //[NotNull]
+        [NotNull]
         public float EndPositionY { get; set; }
         
         public Aoi(string objectName,long timeSpawn,Vector3 position)

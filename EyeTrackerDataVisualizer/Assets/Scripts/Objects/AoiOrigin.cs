@@ -1,17 +1,17 @@
-﻿//using LinqToDB.Mapping;
+﻿using LinqToDB.Mapping;
 using UnityEngine;
 
 namespace Objects
 {
     public class AoiOrigin
     {
-        //[PrimaryKey, Identity]
+        [PrimaryKey, Identity]
         public int Id { get; set; }
-        //[NotNull, Column(Length = 100)]
+        [NotNull, Column(Length = 100)]
         public string AoiId { get; set; }
-        //[NotNull]
+        [NotNull]
         public float PosX { get; set; }
-        //[NotNull]
+        [NotNull]
         public float PosY { get; set; }
         
         public AoiOrigin(string areaOfInterestId,Vector3 origin)

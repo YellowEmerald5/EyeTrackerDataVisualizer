@@ -1,18 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
-using UnityEngine;
 using Objects;
+using UnityEngine;
 
 public class MovementScript : MonoBehaviour
 {
     //The object should be spawned by another script and this script should be added to it
     //Need to make changes for checking if the object should be visible
-    private List<Vector3> _positions;
-    private List<long> _pointIDs;
+    private List<Point> _positions;
     private int _currentPosition;
     private Renderer _renderer;
     private ObjectInGame Object;
+    //public StorageSO Storage;
 
     /// <summary>
     /// Takes the object data and prepares it for replay
@@ -23,13 +24,12 @@ public class MovementScript : MonoBehaviour
         _renderer = GetComponent<MeshRenderer>();
         foreach (var point in obj.Points)
         {
-            var vector = new Vector3(point.PosX,point.PosY,point.PosZ);
-            _pointIDs.Add(point.Id);
-            _positions.Add(vector);
+            _positions.Add(point);
         }
 
-        transform.position = _positions[_currentPosition];
-        ResizeObject();
+        var p = _positions[_currentPosition];
+        transform.position = new Vector3(p.PosX,p.PosY,p.PosZ);
+        ResizeObject(_currentPosition);
     }
 
     public void MoveObjectForwards()
@@ -37,8 +37,9 @@ public class MovementScript : MonoBehaviour
         _currentPosition++;
         if (_currentPosition < _positions.Count-1)
         {
-            transform.position = _positions[_currentPosition];
-            ResizeObject();
+            var point = _positions[_currentPosition];
+            transform.position = new Vector3(point.PosX,point.PosY,point.PosZ);
+            ResizeObject(_currentPosition);
             _renderer.enabled = true;
         }
         else
@@ -53,24 +54,9 @@ public class MovementScript : MonoBehaviour
         _currentPosition--;
         if (_currentPosition >= 0)
         {
-            transform.position = _positions[_currentPosition];
-            ResizeObject();
-            _renderer.enabled = true;
-        }
-        else
-        {
-            _renderer.enabled = false;
-        }
-        
-    }
-
-    public void MoveObjectToTimestamp(long timestamp)
-    {
-        if (_pointIDs.Contains(timestamp))
-        {
-            var pos = _pointIDs.FindIndex(i => i == timestamp);
-            transform.position = _positions[pos];
-            ResizeObject();
+            var point = _positions[_currentPosition];
+            transform.position = new Vector3(point.PosX,point.PosY,point.PosZ);
+            ResizeObject(_currentPosition);
             _renderer.enabled = true;
         }
         else
@@ -79,11 +65,28 @@ public class MovementScript : MonoBehaviour
         }
     }
 
-    private void ResizeObject()
+    public void MoveObjectToTimestamp()
     {
-        var timestamp = _pointIDs[_currentPosition];
-        //Change when structure and id type in objecttracking is known
-        //var aoisize = Object.Aois.AoiSizes.Where(a => a.Id == timestamp);
-        
+        /*var timestamp = Storage.timestamp;
+        if (_positions.FirstOrDefault(p => p.Time  == timestamp) != null)
+        {
+            var pos = _positions.FindIndex(i => i.Time == timestamp);
+            var point = _positions[pos];
+            transform.position = new Vector3(point.PosX,point.PosY,point.PosZ);
+            ResizeObject(pos);
+            _renderer.enabled = true;
+        }
+        else
+        {
+            _renderer.enabled = false;
+        }*/
+    }
+
+    private void ResizeObject(int position)
+    {
+        if (position < 0 || position > Object.Aoi.Sizes.Count) return;
+        var aoisize = Object.Aoi.Sizes[position];
+        //Height and width are screenspace based, might not be the correct sizes here
+        transform.localScale = new Vector3(aoisize.Height,aoisize.Width,0);
     }
 }

@@ -1,16 +1,16 @@
-﻿//using LinqToDB.Mapping;
+﻿using LinqToDB.Mapping;
 
 namespace Objects
 {
     public class AoiSize
     {
-        //[PrimaryKey, Identity]
+        [PrimaryKey, Identity]
         public int Id { get; set; }
-        //[NotNull,Column(Length = 100)]
+        [NotNull,Column(Length = 100)]
         public string AoiId { get; set; }
-        //[NotNull]
+        [NotNull]
         public float Height { get; set; }
-        //[NotNull]
+        [NotNull]
         public float Width { get; set; }
 
         public AoiSize(string aoiId, float height, float width)

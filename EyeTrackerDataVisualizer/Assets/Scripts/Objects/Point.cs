@@ -1,20 +1,20 @@
-﻿//using LinqToDB.Mapping;
+﻿using LinqToDB.Mapping;
 
 namespace Objects
 {
     public class Point
     {
-        //[PrimaryKey,Identity]
+        [PrimaryKey,Identity]
         public int Id { get; set; }
-        //[NotNull,Column(Length = 100)]
+        [NotNull,Column(Length = 100)]
         public string ObjectName { get; set; }
-        //[NotNull]
+        [NotNull]
         public long Time { get; }
-        //[NotNull]
+        [NotNull]
         public float PosX { get; }
-        //[NotNull]
+        [NotNull]
         public float PosY { get; }
-        //[NotNull]
+        [NotNull]
         public float PosZ { get; }
 
         public Point(string objectName, long time, float posX, float posY, float posZ)

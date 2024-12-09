@@ -1,15 +1,17 @@
 ﻿using System.Collections.Generic;
+using LinqToDB.Mapping;
+
 //using LinqToDB.Mapping;
 
 namespace Objects
 {
     public class User
     {
-        //[NotNull,Column(Length = 50)]
+        [NotNull,Column(Length = 50)]
         public string Nickname { get; set; }
-        //[PrimaryKey,Identity]
+        [PrimaryKey,Identity]
         public int Id { get; set; }
-        //[Nullable]
+        [Nullable]
         public List<Session> Sessions { get; set; }
 
         public User()
@@ -20,6 +22,12 @@ namespace Objects
         {
             Nickname = nickname;
             Sessions = new List<Session>();
+        }
+        
+        public User(int id, string nickname)
+        {
+            Id = id;
+            Nickname = nickname;
         }
 
         public User(int id, string nickname, List<Session> sessions)

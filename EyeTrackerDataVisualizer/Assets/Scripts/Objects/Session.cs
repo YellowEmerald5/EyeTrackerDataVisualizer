@@ -1,17 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-//using LinqToDB.Mapping;
+using LinqToDB.Mapping;
+
 
 namespace Objects
 {
     public class Session
     {
-        //[PrimaryKey,Identity]
+        [PrimaryKey,Identity]
         public int Id { get; }
-        //[NotNull]
+        [NotNull]
         public int UserId { get; set; }
         
-        //[Nullable]
+        [Nullable]
         public List<Game> GamesList { get; set; }
 
         public Session(int sessionId, int userId)
