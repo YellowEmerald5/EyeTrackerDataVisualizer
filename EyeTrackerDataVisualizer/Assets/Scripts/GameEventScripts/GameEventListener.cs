@@ -1,8 +1,7 @@
-﻿using ObjectTracking.GameEventScripts;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Events;
 
-namespace ObjectTracking.GameEventScripts
+namespace GameEventScripts
 {
     public class GameEventListener : MonoBehaviour
     {

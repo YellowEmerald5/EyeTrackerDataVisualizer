@@ -20,5 +20,13 @@ namespace Objects
             PosX = origin.x;
             PosY = origin.y;
         }
+
+        public AoiOrigin(int id, string aoiId, float posX, float posY)
+        {
+            Id = id;
+            AoiId = aoiId;
+            PosX = posX;
+            PosY = posY;
+        }
     }
 }

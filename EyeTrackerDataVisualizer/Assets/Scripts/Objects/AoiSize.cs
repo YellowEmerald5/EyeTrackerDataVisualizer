@@ -19,5 +19,13 @@ namespace Objects
             Height = height;
             Width = width;
         }
+        
+        public AoiSize(int id, string aoiId, float height, float width)
+        {
+            Id = id;
+            AoiId = aoiId;
+            Height = height;
+            Width = width;
+        }
     }
 }

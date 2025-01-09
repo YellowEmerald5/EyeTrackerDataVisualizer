@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace ObjectTracking.GameEventScripts
+namespace GameEventScripts
 {
     [CreateAssetMenu(fileName = "GameEvent", menuName = "Event/gameEvent", order = 0)]
     public class GameEvent : ScriptableObject

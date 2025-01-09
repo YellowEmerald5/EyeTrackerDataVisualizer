@@ -25,5 +25,15 @@ namespace Objects
             PosY = posY;
             PosZ = posZ;
         }
+        
+        public Point(int id, string objectName, long time, float posX, float posY, float posZ)
+        {
+            Id = id;
+            ObjectName = objectName;
+            Time = time;
+            PosX = posX;
+            PosY = posY;
+            PosZ = posZ;
+        }
     }
 }

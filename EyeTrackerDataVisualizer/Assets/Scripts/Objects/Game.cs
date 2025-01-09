@@ -10,12 +10,14 @@ namespace Objects
         [NotNull]
         public int TimesPlayed { get; }
         [NotNull]
+        public int UserId { get; set; }
+        [NotNull]
         public int SessionId { get; set; }
         [NotNull,Column(Length = 100)]
         public string Name { get; }
         
         [Nullable]
-        public List<ObjectInGame> Objects { get; }
+        public List<ObjectInGame> Objects { get; set; }
         
         [Nullable]
         public int AmountOfGamesPlayed { get; set; }
@@ -23,6 +25,7 @@ namespace Objects
         public Game(int timesPlayed, int amountOfGamesPlayed,string name, int userId, int sessionId)
         {
             TimesPlayed = timesPlayed;
+            UserId = userId;
             AmountOfGamesPlayed = amountOfGamesPlayed;
             Name = name;
             SessionId = sessionId;

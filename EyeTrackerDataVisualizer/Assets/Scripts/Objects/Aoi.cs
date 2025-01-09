@@ -37,5 +37,17 @@ namespace Objects
             Origins = new List<AoiOrigin>();
             Sizes = new List<AoiSize>();
         }
+        
+        public Aoi(string id, string objectName,long timeSpawn,float startPositionX, float startPositionY, long timeDestroy, float endPositionX, float endPositionY)
+        {
+            Id = id;
+            ObjectName = objectName;
+            TimeSpawn = timeSpawn;
+            StartPositionX = startPositionX;
+            StartPositionY = startPositionY;
+            TimeDestroy = timeDestroy;
+            EndPositionX = endPositionX;
+            EndPositionY = endPositionY;
+        }
     }
 }

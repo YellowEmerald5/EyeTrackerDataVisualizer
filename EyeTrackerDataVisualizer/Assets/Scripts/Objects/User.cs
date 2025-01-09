@@ -28,6 +28,7 @@ namespace Objects
         {
             Id = id;
             Nickname = nickname;
+            Sessions = new List<Session>();
         }
 
         public User(int id, string nickname, List<Session> sessions)

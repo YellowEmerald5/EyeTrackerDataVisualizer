@@ -41,5 +41,21 @@ namespace Objects
             SpawnPositionY = spawnPositionY;
             SpawnPositionZ = spawnPositionZ;
         }
+        
+        public ObjectInGame(string name, int gameId, long timeSpawn, float spawnPositionX, float spawnPositionY, float spawnPositionZ, long timeDestroyed, float endPositionX, float endPositionY, float endPositionZ)
+        {
+            GameId = gameId;
+            Name = name;
+            //Aoi = aoi;
+            //Points = points;
+            TimeSpawn = timeSpawn;
+            SpawnPositionX = spawnPositionX;
+            SpawnPositionY = spawnPositionY;
+            SpawnPositionZ = spawnPositionZ;
+            TimeDestroyed = timeDestroyed;
+            EndPositionX = endPositionX;
+            EndPositionY = endPositionY;
+            EndPositionZ = endPositionZ;
+        }
     }
 }
