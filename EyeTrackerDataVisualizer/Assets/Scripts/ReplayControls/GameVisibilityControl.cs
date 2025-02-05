@@ -1,22 +1,29 @@
 ﻿using System.Collections.Generic;
+using ScriptableObjects;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace ReplayControls
 {
     public class GameVisibilityControl : MonoBehaviour
     {
-        public List<MeshRenderer> objectsToHide = new ();
+        private readonly Dictionary<int,GameObject> _objectsToHide = new ();
+        public GameIdsForVisibility gameIdsStorage;
+        public ShowHideTimelineTimeframe showHide;
+        public bool TimeType; // false = timeline. true = timeframes
 
-        /// <summary>
-        /// Hides objects from selected games when the toggle is not checked
-        /// </summary>
-        /// <param name="value">Boolean value from toggle</param>
-        public void HideObjects(bool value)
+        public void ShowHideAll()
         {
-            foreach (var mesh in objectsToHide)
+            var active = TimeType == false ? showHide.showTimeline : showHide.showTimeframe;
+            foreach (var pair in _objectsToHide)
             {
-                mesh.enabled = value;
+                pair.Value.SetActive(active);
             }
+        }
+
+        public void AddGame(int id, GameObject obj)
+        {
+            _objectsToHide.Add(id,obj);
         }
     }
 }

@@ -13,6 +13,7 @@ namespace TimeLine
         [SerializeField] public UnityEvent valueChanged;
         private int i = 0;
         private int previousSpeed;
+        private bool _timePeriod;
     
         /// <summary>
         /// Sets the max value of the slider and gets the main camera used for object placements;
@@ -20,7 +21,7 @@ namespace TimeLine
         void Start()
         {
             storage.MainCamera = Camera.main;
-            slider.maxValue = storage.TotalTimestampEntries;
+            slider.maxValue = storage.TotalTimestampEntries-1;
         }
 
         /// <summary>
@@ -28,8 +29,7 @@ namespace TimeLine
         /// </summary>
         private void ProgressTimeline()
         {
-            print(play);
-            if (!play || slider.value+1 >= slider.maxValue) return;
+            if (!play || _timePeriod || slider.value >= slider.maxValue) return;
             slider.value++;
             storage.CurrentTimestamp = slider.value;
         }
@@ -73,6 +73,11 @@ namespace TimeLine
                 i++;
             }
 
+        }
+
+        public void ChangedRepresentationStyle()
+        {
+            _timePeriod = !_timePeriod;
         }
     }
 }

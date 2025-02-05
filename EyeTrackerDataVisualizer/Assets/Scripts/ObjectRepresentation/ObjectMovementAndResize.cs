@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using Objects;
 using ReplayControls;
 using ScriptableObjects;
@@ -9,11 +11,15 @@ namespace ObjectRepresentation
     {
         public ObjectInGame Object;
         public StorageSO storage;
-        public bool ShowDestroyed;
+        public int startPosition;
+        public int endPosition;
         private MeshRenderer _mesh;
         public Color Color;
-        public GameVisibilityControl visibilityControl;
-        private int i = 0;
+        //private int i = 0;
+        private bool _destroyed;
+        public List<Vector3> _pointsInWorld;
+
+        private int timestampDifference;
 
         /// <summary>
         /// Moves the object into position and resizes it
@@ -21,14 +27,19 @@ namespace ObjectRepresentation
         public void Begin()
         {
             _mesh = gameObject.GetComponent<MeshRenderer>();
-            visibilityControl.objectsToHide.Add(_mesh);
-            var pos = new Vector3(Object.SpawnPositionX, Object.SpawnPositionY, Object.SpawnPositionZ);
-            var worldPos = storage.MainCamera.ScreenToWorldPoint(pos);
-            var b = new Bounds();
-            b.size = new Vector3(Object.Aoi.Sizes[0].Width, Object.Aoi.Sizes[0].Height, 0);
-            _mesh.bounds = b;
-            _mesh.material.color = Color;
-            transform.position = worldPos;
+            /*var b = new Bounds
+            {
+                size = new Vector3(Object.Aoi.Sizes[0].Width, Object.Aoi.Sizes[0].Height, 0)
+            };
+            _mesh.bounds = b;*/
+            var material = _mesh.material;
+            material.color = Color;
+            material.enableInstancing = true;
+            timestampDifference = (int) storage.TotalTimestampEntries - startPosition;
+            if ((int)storage.CurrentTimestamp == startPosition)
+            {
+                transform.position = _pointsInWorld[0];
+            }
         }
 
         /// <summary>
@@ -36,22 +47,24 @@ namespace ObjectRepresentation
         /// </summary>
         public void MoveObject()
         {
-            if (!ShowDestroyed)
-                _mesh.enabled = !(storage.CurrentTimestamp > Object.Points[^1].Time ||
-                                  storage.CurrentTimestamp < Object.Points[0].Time);
-
-            var point = Object.Points.Find(p => p.Time == storage.Timestamps[(int) storage.CurrentTimestamp]);
-            if (point == null) return;
-            var pos = new Vector3(point.PosX, point.PosY, point.PosZ + 200);
-            var worldPos = storage.MainCamera.ScreenToWorldPoint(pos);
-            var t = transform;
-            t.position = worldPos;
-            i++;
-            var b = new Bounds
+            var currentTimestamp = storage.CurrentTimestamp;
+            if (currentTimestamp > startPosition && currentTimestamp < endPosition && _destroyed)
             {
-                size = new Vector3(Object.Aoi.Sizes[i].Width, Object.Aoi.Sizes[i].Height, 0)
-            };
-            _mesh.bounds = b;
+                _destroyed = false;
+            }else if (currentTimestamp > endPosition && !_destroyed)
+            {
+                _destroyed = true;
+                HideObject();
+                return;
+            }
+            if (currentTimestamp < startPosition || currentTimestamp > endPosition) return;
+            transform.position = _pointsInWorld[(int) currentTimestamp-startPosition];
+        }
+
+        public void HideObject()
+        {
+            if (!_destroyed) return;
+            _mesh.enabled = storage.ShowDestroyed;
         }
     }
 }

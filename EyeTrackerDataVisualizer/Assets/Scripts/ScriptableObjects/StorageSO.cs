@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Lists;
 using Objects;
 using UnityEngine;
@@ -18,13 +19,14 @@ namespace ScriptableObjects
         public MainMenuItemTypes CurrentItemType = MainMenuItemTypes.User;
         public float CurrentTimestamp;
         public float TotalTimestampEntries;
-        public List<long> Timestamps = new ();
+        //public List<long> Timestamps = new ();
         public Camera MainCamera;
         public List<sensor_et> SensorData = new();
         public int TimeDelay = 0;
         public bool SpeedChanged = false;
         public bool ShowDestroyed = true;
         public List<Color> Colors = new ();
+        public Dictionary<string, Tuple<int, int>> StartAndEndPoints = new ();
         
         /// <summary>
         /// Resets the values in storage. Not used outside of editor
@@ -37,8 +39,15 @@ namespace ScriptableObjects
             UserList = new List<User>();
             SessionList = new List<Session>();
             GameList = new List<Game>();
+            CurrentItemType = MainMenuItemTypes.User;
             MainCamera = null;
+            CurrentTimestamp = 0;
             TimeDelay = 0;
+            TotalTimestampEntries = 0;
+            SensorData = new List<sensor_et>();
+            SpeedChanged = false;
+            ShowDestroyed = true;
+            StartAndEndPoints = new Dictionary<string, Tuple<int, int>>();
         }
 
         public void ChangeShowDestroyed()

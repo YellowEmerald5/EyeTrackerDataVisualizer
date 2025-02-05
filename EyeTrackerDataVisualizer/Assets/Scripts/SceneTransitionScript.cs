@@ -17,9 +17,10 @@ public class SceneTransitionScript : MonoBehaviour
     {
         var preparedData = DatabaseHandler.PrepareReplay(storage.GameList);
         storage.GameList = preparedData.PreparedGames;
-        storage.Timestamps = preparedData.TimeStamps;
+        //storage.Timestamps = preparedData.TimeStamps;
         storage.SensorData = preparedData.SensorData;
         storage.TotalTimestampEntries = preparedData.TotalTimestamps;
+        storage.StartAndEndPoints = preparedData.StartAndEndPoints;
         SceneManager.LoadScene(NextScene);
     }
 }

@@ -14,8 +14,8 @@ namespace ReplayControls
         /// </summary>
         public void MoveGazeObject()
         {
-            if (storage.SensorData.Count == 0) return;
-            var pos = storage.SensorData.FirstOrDefault(d => d.Timestamp == storage.CurrentTimestamp);
+            if (storage.SensorData.Count == 0 || storage.CurrentTimestamp >= storage.SensorData.Count) return;
+            var pos = storage.SensorData[(int)storage.CurrentTimestamp];
             if (pos == null) return;
             var worldPos = storage.MainCamera.ScreenToWorldPoint(new Vector3(pos.PosX, pos.PosY, 200));
             transform.position = worldPos;
