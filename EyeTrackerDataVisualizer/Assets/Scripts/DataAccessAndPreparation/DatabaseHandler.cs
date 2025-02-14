@@ -5,6 +5,7 @@ using LinqToDB;
 using LinqToDB.Data;
 using MySqlConnector;
 using Objects;
+using UnityEngine;
 
 namespace DataAccessAndPreparation
 {
@@ -86,12 +87,12 @@ namespace DataAccessAndPreparation
         {
             var dataConnection = GetDataConnection();
             var timestamps = new List<long>();
-            var sensorData = new List<sensor_et>();
+            var sensorData = new List<List<sensor_et>>();
             var totalTimestamps = 0;
             var startAndEndPoints = new Dictionary<string,Tuple<int,int>>();
+            var startEndGazePoints = new Dictionary<long, Tuple<int, int>>();
             foreach (var game in games)
             {
-                
                 game.Objects = dataConnection.GetTable<ObjectInGame>().Select(o =>
                         new ObjectInGame(o.Name, o.GameId, o.TimeSpawn, o.SpawnPositionX,
                             o.SpawnPositionY,
@@ -101,6 +102,8 @@ namespace DataAccessAndPreparation
                 var start = 0L;
                 var end = 0L;
                 var first = true;
+                var gameStart = 0L;
+                var gameEnd = 0L;
                 foreach (var obj in game.Objects)
                 {
                     obj.Aoi = dataConnection.GetTable<Aoi>().Select(a => new Aoi(a.Id, a.ObjectName, a.TimeSpawn,
@@ -138,45 +141,77 @@ namespace DataAccessAndPreparation
                     var objectStartTime = obj.Points[0].Time;
                     var objectEndTime = obj.Points[^1].Time;
 
+                    
+                    if (objectStartTime < gameStart || gameStart == 0)
+                    {
+                        gameStart = objectStartTime;
+                    }
+                    
+                    if (objectEndTime > gameEnd || gameEnd == 0)
+                    {
+                        gameEnd = objectEndTime;
+                    }
+
                     if (j > totalTimestamps)
                     {
                         totalTimestamps = j;
-                    }
-                    
-                    try
-                    {
-                        sensorData.AddRange(dataConnection.GetTable<sensor_et>().Select(s =>
-                                new sensor_et(s.Id,s.Id_activity,s.Id_session,s.PosX,s.PosY,s.PupilDiaX,s.PupilDiaY,s.HeadX,s.HeadY,s.HeadZ,s.Validity,s.Timestamp))
-                            .Where(s => s.Id_activity == game.Id && s.Timestamp > start && s.Timestamp < end).ToList());
-                    }
-                    catch (MySqlException e)
-                    {
-                        sensorData = ReadFromCSV.GetSensorDataFromCSV().Where(d => d.Id_activity == 1121).ToList();
-                        Console.Write(e.ToString());
-                    }
-
-                    var i = 0;
-                    foreach (var sensorPoint in sensorData.Where(data => !timestamps.Contains(data.Timestamp)))
-                    {
-                        //if(sensorPoint.Timestamp >= start && sensorPoint.Timestamp <= end)
-                        timestamps.Add(sensorPoint.Timestamp);
-                        i++;
-                    }
-
-                    if (i > totalTimestamps)
-                    {
-                        totalTimestamps = i;
                     }
 
                     var objectStartPoint = timestamps.FindIndex(timestamp => timestamp == objectStartTime);
                     var objectEndPoint = timestamps.FindIndex(timestamp => timestamp == objectEndTime);
                     startAndEndPoints.Add(obj.Name,new Tuple<int, int>(objectStartPoint,objectEndPoint));
+
+                }
+                sensorData.Add(new List<sensor_et>());
                     
+                try
+                {
+                    sensorData[^1].AddRange(dataConnection.GetTable<sensor_et>().Select(s =>
+                            new sensor_et(s.Id,s.Id_activity,s.Id_session,s.PosX,s.PosY,s.PupilDiaX,s.PupilDiaY,s.HeadX,s.HeadY,s.HeadZ,s.Validity,s.Timestamp))
+                        .Where(s => s.Id_activity == game.Id && s.Timestamp > gameStart && s.Timestamp < gameEnd).ToList());
+                }
+                catch (MySqlException e)
+                {
+                    sensorData[^1] = ReadFromCSV.GetSensorDataFromCSV().Where(d => d.Id_activity == 1121 && d.Validity.Equals("1")).ToList();
+                    Console.Write(e.ToString());
+                }
+
+                var mostPoints = 0;
+                for (var i = 0; i < sensorData.Count; i++)
+                {
+                    for (var k = 0; k < sensorData[i].Count; k++)
+                    {
+                        if (!timestamps.Contains(sensorData[i][k].Timestamp))
+                        {
+                            timestamps.Add(sensorData[i][k].Timestamp);
+                        }
+
+                        if (sensorData[i].Count > mostPoints)
+                        {
+                            mostPoints = sensorData[i].Count;
+                        }
+                    }
+                }
+                    
+
+                if (mostPoints > totalTimestamps)
+                {
+                    totalTimestamps = mostPoints;
+                }
+                
+                var gazeStartPoint = timestamps.FindIndex(timestamp => timestamp == sensorData[^1][0].Timestamp);
+                var gazeEndPoint = timestamps.FindIndex(timestamp => timestamp == sensorData[^1][^1].Timestamp);
+                try
+                {
+                    startEndGazePoints.Add(sensorData[^1][0].Timestamp,new Tuple<int, int>(gazeStartPoint,gazeEndPoint));
+                }
+                catch (ArgumentException ex)
+                {
+                        
                 }
             }
-
             timestamps.Sort();
-            return new PreparedData(games,timestamps,startAndEndPoints,sensorData,totalTimestamps);
+            return new PreparedData(games,startEndGazePoints,startAndEndPoints,sensorData,totalTimestamps);
         }
 
 

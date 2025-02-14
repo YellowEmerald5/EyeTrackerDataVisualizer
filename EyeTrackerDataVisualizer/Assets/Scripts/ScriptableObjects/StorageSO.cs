@@ -19,9 +19,9 @@ namespace ScriptableObjects
         public MainMenuItemTypes CurrentItemType = MainMenuItemTypes.User;
         public float CurrentTimestamp;
         public float TotalTimestampEntries;
-        //public List<long> Timestamps = new ();
+        public Dictionary<long, Tuple<int, int>> StartEndGazePoints = new ();
         public Camera MainCamera;
-        public List<sensor_et> SensorData = new();
+        public List<List<sensor_et>> SensorData = new();
         public int TimeDelay = 0;
         public bool SpeedChanged = false;
         public bool ShowDestroyed = true;
@@ -44,10 +44,11 @@ namespace ScriptableObjects
             CurrentTimestamp = 0;
             TimeDelay = 0;
             TotalTimestampEntries = 0;
-            SensorData = new List<sensor_et>();
+            SensorData = new List<List<sensor_et>>();
             SpeedChanged = false;
             ShowDestroyed = true;
             StartAndEndPoints = new Dictionary<string, Tuple<int, int>>();
+            StartEndGazePoints = new Dictionary<long, Tuple<int, int>>();
         }
 
         public void ChangeShowDestroyed()

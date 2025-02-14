@@ -71,18 +71,42 @@ namespace ObjectRepresentation
             changeRepresentation.response = ev;
             changeRepresentation.RegisterListener();
             
+            var listener = timelineObjects.AddComponent<GameEventListener>();
+            var gameEvent = new UnityEvent();
+            gameEvent.AddListener(timelineVisibilityControl.ShowHideGame);
+            listener.gameEvent = showHideGame;
+            listener.RegisterListener();
+            listener.response = gameEvent;
+            
+            listener = timeframeObjects.AddComponent<GameEventListener>();
+            gameEvent = new UnityEvent();
+            gameEvent.AddListener(timeframeVisibilityControl.ShowHideGame);
+            listener.gameEvent = showHideGame;
+            listener.RegisterListener();
+            listener.response = gameEvent;
+            
             var i = 0;
-            foreach (var game in storage.GameList)
+            for (var j = 0; j < storage.GameList.Count; j++)
             {
+                var game = storage.GameList[j];
                 var color = new Color(0,0,0,1);
                 if (i < storage.Colors.Count)
                 {
                     color = storage.Colors[i];
                 }
 
-                //var listItem = Instantiate(ScrollViewItem, gameOverviewContent.transform);
+                var listItem = Instantiate(ScrollViewItem, gameOverviewContent.transform);
+                var image = listItem.GetComponentInChildren<Image>();
+                image.color = color;
+                listItem.SetActive(true);
+                var gameVisibilityToggle = listItem.AddComponent<GameVisibilityToggle>();
+                gameVisibilityToggle.gameId = game.Id;
+                gameVisibilityToggle.gameIds = gameIds;
+                gameVisibilityToggle.AddGameToDictionary();
+                var toggle = listItem.GetComponentInChildren<Toggle>();
+                toggle.onValueChanged.AddListener(gameVisibilityToggle.AlterStateInStorage);
 
-                var worldPositions = new List<List<Vector3>>();
+                var objectWorldPositions = new List<List<Vector3>>();
                 foreach (var obj in game.Objects)
                 {
                     var pointsInWorldCoords = new List<Vector3>();
@@ -92,17 +116,24 @@ namespace ObjectRepresentation
                         var worldPos = storage.MainCamera.ScreenToWorldPoint(pos);
                         pointsInWorldCoords.Add(worldPos);
                     }
-                    worldPositions.Add(pointsInWorldCoords);
+                    objectWorldPositions.Add(pointsInWorldCoords);
                 }
                 
+                var gazeWorldPositions = new List<Vector3>();
+                foreach (var gazePoint in storage.SensorData[i])
+                {
+                    var pos = new Vector3(gazePoint.PosX,gazePoint.PosY,200);
+                    var worldPos = storage.MainCamera.ScreenToWorldPoint(pos);
+                    gazeWorldPositions.Add(worldPos);
+                }
                 
-                CreateTimelineObjects(timelineObjects,timelineVisibilityControl, color, game, worldPositions);
-                CreateTimeframeObjects(timeframeObjects,game,worldPositions,timeframeVisibilityControl,color);
+                CreateTimelineObjects(timelineObjects,timelineVisibilityControl, color, game, objectWorldPositions, gazeWorldPositions);
+                CreateTimeframeObjects(timeframeObjects,game,objectWorldPositions,timeframeVisibilityControl,color,gazeWorldPositions, j);
                 i++;
             }
         }
 
-        private void CreateTimelineObjects(GameObject timelineObjects, GameVisibilityControl timelineVisibilityControl, Color color, Game game, List<List<Vector3>> gameWorldPositions)
+        private void CreateTimelineObjects(GameObject timelineObjects, GameVisibilityControl timelineVisibilityControl, Color color, Game game, List<List<Vector3>> gameWorldPositions, List<Vector3> gazeWorldPositions)
         {
             var parentObject = new GameObject
             {
@@ -115,21 +146,18 @@ namespace ObjectRepresentation
             timelineVisibilityControl.AddGame(game.Id,parentObject);
             timelineVisibilityControl.TimeType = false;
             
-            
-            
             var spawner = parentObject.AddComponent<ObjectSpawner>();
             spawner.showHideDestroyed = showHideDestroyed;
             spawner.storage = storage;
             spawner.color = color;
             spawner.gazeObject = gazeObject;
-            spawner.Parent = parentObject.transform;
             spawner.instanceObject = instanceObject;
             spawner.timeValueChanged = timeValueChanged;
             spawner.Game = game;
-            spawner.SpawnObjects(gameWorldPositions);
+            spawner.SpawnObjects(gameWorldPositions,gazeWorldPositions);
         }
 
-        private void CreateTimeframeObjects(GameObject timeframeObjects, Game game, List<List<Vector3>> gameWorldPositions, GameVisibilityControl timeframeVisibilityControl,Color color)
+        private void CreateTimeframeObjects(GameObject timeframeObjects, Game game, List<List<Vector3>> gameWorldPositions, GameVisibilityControl timeframeVisibilityControl,Color color, List<Vector3> gazeWorldPositions, int gameNumber)
         {
             var parentObject = new GameObject
             {
@@ -148,7 +176,7 @@ namespace ObjectRepresentation
                 enableInstancing = true,
                 color = color
             };
-            foreach (var obj in gameWorldPositions)
+            for (var i = 0; i<gameWorldPositions.Count;i++)
             {
                 var pointsParent = new GameObject
                 {
@@ -157,13 +185,30 @@ namespace ObjectRepresentation
                         parent = parentObject.transform
                     }
                 };
-                foreach (var point in obj)
+                for (var j = 0; j < gameWorldPositions[i].Count; j++)
                 {
                     var newPoint = Instantiate(instanceObject,pointsParent.transform);
-                    var spawnedObject = StaticObjectSpawner.SpawnStaticObject(point,material,newPoint);
-                    //timeframeVisibilityController.AddPoint(,newPoint);
+                    StaticObjectSetUp.SetUpStaticObjects(gameWorldPositions[i][j],material,newPoint);
+                    var startEnd = storage.StartAndEndPoints[game.Objects[i].Name];
+                    var positionInList = startEnd.Item1 + j;
+                    if(positionInList > startEnd.Item2) continue;
+                    timeframeVisibilityController.AddObjectPoint(positionInList,newPoint);
                 }
             }
+
+            var timestamp = storage.SensorData[gameNumber][0].Timestamp;
+            var tuple = storage.StartEndGazePoints[timestamp];
+            var start = tuple.Item1;
+            var end = tuple.Item2;
+            for (var i = 0; i < gazeWorldPositions.Count; i++)
+            {
+                var newPoint = Instantiate(gazeObject, parentObject.transform);
+                StaticObjectSetUp.SetUpStaticObjects(gazeWorldPositions[i],material,newPoint);
+                var positionInList = start + i;
+                if(positionInList > end) continue;
+                timeframeVisibilityController.AddGazePoint(positionInList,newPoint);
+            }
+
         }
     }
 }

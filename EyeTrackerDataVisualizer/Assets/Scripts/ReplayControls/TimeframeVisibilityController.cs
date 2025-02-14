@@ -6,23 +6,36 @@ namespace ReplayControls
 {
     public class TimeframeVisibilityController : MonoBehaviour
     {
-        public Dictionary<long, List<GameObject>> pointsInTime;
+        public Dictionary<float, List<GameObject>> PointsInTime = new ();
+        public Dictionary<float, List<GameObject>> GazePointsInTime = new ();
 
-        public void AddPoint(long pointInTime, GameObject visualPoint)
+        public void AddObjectPoint(long pointInTime, GameObject visualPoint)
         {
-            if (pointsInTime.ContainsKey(pointInTime))
+            if (PointsInTime.ContainsKey(pointInTime))
             {
-                pointsInTime[pointInTime].Add(visualPoint);
+                PointsInTime[pointInTime].Add(visualPoint);
             }
             else
             {
-                pointsInTime.Add(pointInTime,new List<GameObject>{visualPoint});
+                PointsInTime.Add(pointInTime,new List<GameObject>{visualPoint});
+            }
+        }
+
+        public void AddGazePoint(long timeValue, GameObject gazePoint)
+        {
+            if (GazePointsInTime.ContainsKey(timeValue))
+            {
+                GazePointsInTime[timeValue].Add(gazePoint);
+            }
+            else
+            {
+                GazePointsInTime.Add(timeValue,new List<GameObject>{gazePoint});
             }
         }
 
         public void HidePoints(float start, float end)
         {
-            foreach (var points in pointsInTime.Where(pair => pair.Key < start || pair.Key > end))
+            foreach (var points in PointsInTime.Where(pair => pair.Key < start || pair.Key > end))
             {
                 foreach (var point in points.Value)
                 {
@@ -30,7 +43,23 @@ namespace ReplayControls
                 }
             }
             
-            foreach (var points in pointsInTime.Where(pair => pair.Key >= start && pair.Key <= end))
+            foreach (var points in PointsInTime.Where(pair => pair.Key >= start && pair.Key <= end))
+            {
+                foreach (var point in points.Value)
+                {
+                    point.SetActive(true);
+                }
+            }
+            
+            foreach (var points in GazePointsInTime.Where(pair => pair.Key < start || pair.Key > end))
+            {
+                foreach (var point in points.Value)
+                {
+                    point.SetActive(false);
+                }
+            }
+            
+            foreach (var points in GazePointsInTime.Where(pair => pair.Key >= start && pair.Key <= end))
             {
                 foreach (var point in points.Value)
                 {

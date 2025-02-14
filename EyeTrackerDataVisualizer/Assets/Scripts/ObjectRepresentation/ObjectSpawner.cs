@@ -18,25 +18,24 @@ namespace ObjectRepresentation
         public GameObject gazeObject;
         public GameEvent timeValueChanged;
         public GameEvent showHideDestroyed;
-        public Transform Parent;
         public Color color;
         
         /// <summary>
         /// Spawns in and sets up the object representations and the gaze objects
         /// </summary>
-        public void SpawnObjects(List<List<Vector3>> worldPositions)
+        public void SpawnObjects(List<List<Vector3>> objectWorldPositions,List<Vector3> gazeWorldPositions)
         { 
             
             for (var i = 0; i < Game.Objects.Count; i++)
             {
                 var obj = Game.Objects[i];
-                var instance = Instantiate(instanceObject,Parent.transform);
+                var instance = Instantiate(instanceObject,gameObject.transform);
                 instance.SetActive(true);
                 var movementScript = instance.AddComponent<ObjectMovementAndResize>();
                 var startAndEnd = storage.StartAndEndPoints[obj.Name];
                 movementScript.startPosition = startAndEnd.Item1;
                 movementScript.endPosition = startAndEnd.Item2;
-                movementScript._pointsInWorld = worldPositions[i];
+                movementScript._pointsInWorld = objectWorldPositions[i];
                 movementScript.Color = color;
                 
                 var eventListener = instance.AddComponent<GameEventListener>();
@@ -59,12 +58,13 @@ namespace ObjectRepresentation
                 
             }
 
-            var gazeObjectInstance = Instantiate(gazeObject,Parent.transform);
+            var gazeObjectInstance = Instantiate(gazeObject,gameObject.transform);
             gazeObjectInstance.SetActive(true);
             var script = gazeObjectInstance.AddComponent<GazeManagingScript>();
             var mesh = gazeObjectInstance.GetComponent<MeshRenderer>();
             mesh.material.color = color;
             script.storage = storage;
+            script.positions = gazeWorldPositions;
             var gameEventListener = script.AddComponent<GameEventListener>();
             var ent = new UnityEvent();
             ent.AddListener(script.MoveGazeObject);

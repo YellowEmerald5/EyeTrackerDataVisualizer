@@ -6,7 +6,9 @@ using UnityEngine.Serialization;
 public class ResetStorage : MonoBehaviour
 {
     public StorageSO storage;
-    [FormerlySerializedAs("imageAndVideoStorage")] public ImagesAndVideosStorage imagesAndVideosStorage;
+    public GameIdsForVisibility gameIds;
+    public ShowHideTimelineTimeframe showHideTimelineTimeframe;
+    public ImagesAndVideosStorage imagesAndVideosStorage;
         
     /// <summary>
     /// Sets up a listener to reset the storageSO when play mode is exited in the editor
@@ -27,5 +29,7 @@ public class ResetStorage : MonoBehaviour
         if (state != PlayModeStateChange.EnteredEditMode) return;
         storage.ResetStorage();
         imagesAndVideosStorage.ResetStorage();
+        gameIds.Reset();
+        showHideTimelineTimeframe.Reset();
     }
 }

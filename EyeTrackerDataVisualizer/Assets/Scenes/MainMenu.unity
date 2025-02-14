@@ -740,6 +740,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   storage: {fileID: 11400000, guid: de922c0aa40307f409f29c1c3e529c67, type: 2}
+  gameIds: {fileID: 11400000, guid: ed54d49037da9814bb76a2b5d2c5f3e2, type: 2}
+  showHideTimelineTimeframe: {fileID: 11400000, guid: 415a71291a8006e4e8436f213dcad485, type: 2}
   imagesAndVideosStorage: {fileID: 11400000, guid: 4156b0abe7e5cb24b8d815ba802c03cd, type: 2}
 --- !u!4 &139401658
 Transform:
