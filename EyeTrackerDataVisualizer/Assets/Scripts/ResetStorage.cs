@@ -17,7 +17,6 @@ public class ResetStorage : MonoBehaviour
     /// </summary>
     private void OnEnable()
     {
-        print(timeframeValuesStorage.toValue);
         EditorApplication.playModeStateChanged += ResetStorages;
     }
 

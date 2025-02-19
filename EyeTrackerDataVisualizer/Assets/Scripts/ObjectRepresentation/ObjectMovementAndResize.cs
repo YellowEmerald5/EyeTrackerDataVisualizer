@@ -39,6 +39,7 @@ namespace ObjectRepresentation
             if ((int)storage.CurrentTimestamp == startPosition)
             {
                 transform.position = _pointsInWorld[0];
+                print(_pointsInWorld[0]);
             }
         }
 
@@ -58,6 +59,7 @@ namespace ObjectRepresentation
                 return;
             }
             if (currentTimestamp < startPosition || currentTimestamp > endPosition) return;
+            if (currentTimestamp > _pointsInWorld.Count - 1) return;
             transform.position = _pointsInWorld[(int) currentTimestamp-startPosition];
         }
 

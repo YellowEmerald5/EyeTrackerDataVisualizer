@@ -118,7 +118,6 @@ namespace DataAccessAndPreparation
                         .Select(p => new Point(p.Id, p.ObjectName, p.Time, p.PosX, p.PosY, p.PosZ))
                         .Where(p => p.ObjectName.Equals(obj.Name)).ToList();
 
-                    var j = 0;
                     foreach (var point in obj.Points.Where(point => !timestamps.Contains(point.Time)))
                     {
                         timestamps.Add(point.Time);
@@ -135,7 +134,6 @@ namespace DataAccessAndPreparation
                         if (!first) continue;
                         start = point.Time;
                         first = false;
-                        j++;
                     }
 
                     var objectStartTime = obj.Points[0].Time;
@@ -151,19 +149,14 @@ namespace DataAccessAndPreparation
                     {
                         gameEnd = objectEndTime;
                     }
-
-                    if (j > totalTimestamps)
-                    {
-                        totalTimestamps = j;
-                    }
-
+                    timestamps.Sort();
                     var objectStartPoint = timestamps.FindIndex(timestamp => timestamp == objectStartTime);
                     var objectEndPoint = timestamps.FindIndex(timestamp => timestamp == objectEndTime);
                     startAndEndPoints.Add(obj.Name,new Tuple<int, int>(objectStartPoint,objectEndPoint));
 
                 }
+                
                 sensorData.Add(new List<sensor_et>());
-                    
                 try
                 {
                     sensorData[^1].AddRange(dataConnection.GetTable<sensor_et>().Select(s =>
@@ -176,7 +169,6 @@ namespace DataAccessAndPreparation
                     Console.Write(e.ToString());
                 }
 
-                var mostPoints = 0;
                 for (var i = 0; i < sensorData.Count; i++)
                 {
                     for (var k = 0; k < sensorData[i].Count; k++)
@@ -185,32 +177,19 @@ namespace DataAccessAndPreparation
                         {
                             timestamps.Add(sensorData[i][k].Timestamp);
                         }
-
-                        if (sensorData[i].Count > mostPoints)
-                        {
-                            mostPoints = sensorData[i].Count;
-                        }
                     }
                 }
-                    
 
-                if (mostPoints > totalTimestamps)
+                if (sensorData[^1].Count > 0)
                 {
-                    totalTimestamps = mostPoints;
-                }
-                
-                var gazeStartPoint = timestamps.FindIndex(timestamp => timestamp == sensorData[^1][0].Timestamp);
-                var gazeEndPoint = timestamps.FindIndex(timestamp => timestamp == sensorData[^1][^1].Timestamp);
-                try
-                {
-                    startEndGazePoints.Add(sensorData[^1][0].Timestamp,new Tuple<int, int>(gazeStartPoint,gazeEndPoint));
-                }
-                catch (ArgumentException ex)
-                {
-                        
+                    timestamps.Sort();
+                    var gazeStartPoint = timestamps.FindIndex(timestamp => timestamp == sensorData[^1][0].Timestamp);
+                    var gazeEndPoint = timestamps.FindIndex(timestamp => timestamp == sensorData[^1][^1].Timestamp);
+                    startEndGazePoints.Add(sensorData[^1][0].Timestamp,
+                            new Tuple<int, int>(gazeStartPoint, gazeEndPoint));
                 }
             }
-            timestamps.Sort();
+            totalTimestamps = timestamps.Count-1;
             return new PreparedData(games,startEndGazePoints,startAndEndPoints,sensorData,totalTimestamps);
         }
 

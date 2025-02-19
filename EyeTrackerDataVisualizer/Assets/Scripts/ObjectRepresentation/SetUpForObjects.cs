@@ -135,6 +135,7 @@ namespace ObjectRepresentation
 
         private void CreateTimelineObjects(GameObject timelineObjects, GameVisibilityControl timelineVisibilityControl, Color color, Game game, List<List<Vector3>> gameWorldPositions, List<Vector3> gazeWorldPositions)
         {
+            print("Called");
             var parentObject = new GameObject
             {
                 transform =
@@ -196,17 +197,20 @@ namespace ObjectRepresentation
                 }
             }
 
-            var timestamp = storage.SensorData[gameNumber][0].Timestamp;
-            var tuple = storage.StartEndGazePoints[timestamp];
-            var start = tuple.Item1;
-            var end = tuple.Item2;
-            for (var i = 0; i < gazeWorldPositions.Count; i++)
+            if (storage.SensorData[gameNumber].Count > 0)
             {
-                var newPoint = Instantiate(gazeObject, parentObject.transform);
-                StaticObjectSetUp.SetUpStaticObjects(gazeWorldPositions[i],material,newPoint);
-                var positionInList = start + i;
-                if(positionInList > end) continue;
-                timeframeVisibilityController.AddGazePoint(positionInList,newPoint);
+                var timestamp = storage.SensorData[gameNumber][0].Timestamp;
+                var tuple = storage.StartEndGazePoints[timestamp];
+                var start = tuple.Item1;
+                var end = tuple.Item2;
+                for (var i = 0; i < gazeWorldPositions.Count; i++)
+                {
+                    var newPoint = Instantiate(gazeObject, parentObject.transform);
+                    StaticObjectSetUp.SetUpStaticObjects(gazeWorldPositions[i],material,newPoint);
+                    var positionInList = start + i;
+                    if(positionInList > end) continue;
+                    timeframeVisibilityController.AddGazePoint(positionInList,newPoint);
+                }
             }
 
         }

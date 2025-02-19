@@ -25,9 +25,10 @@ namespace ObjectRepresentation
         /// </summary>
         public void SpawnObjects(List<List<Vector3>> objectWorldPositions,List<Vector3> gazeWorldPositions)
         { 
-            
+            print(Game.Objects.Count);
             for (var i = 0; i < Game.Objects.Count; i++)
             {
+                print("spawning object");
                 var obj = Game.Objects[i];
                 var instance = Instantiate(instanceObject,gameObject.transform);
                 instance.SetActive(true);
