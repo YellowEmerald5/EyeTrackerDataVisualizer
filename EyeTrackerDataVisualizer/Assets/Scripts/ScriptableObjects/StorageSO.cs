@@ -31,7 +31,7 @@ namespace ScriptableObjects
         /// <summary>
         /// Resets the values in storage. Not used outside of editor
         /// </summary>
-        public void ResetStorage()
+        public void Reset()
         {
             TempUserList = new List<User>();
             TempSessionList = new List<Session>();

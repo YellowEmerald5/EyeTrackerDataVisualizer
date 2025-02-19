@@ -9,6 +9,7 @@ public class ResetStorage : MonoBehaviour
     public GameIdsForVisibility gameIds;
     public ShowHideTimelineTimeframe showHideTimelineTimeframe;
     public ImagesAndVideosStorage imagesAndVideosStorage;
+    public TimeframeValuesStorage timeframeValuesStorage;
         
     /// <summary>
     /// Sets up a listener to reset the storageSO when play mode is exited in the editor
@@ -16,6 +17,7 @@ public class ResetStorage : MonoBehaviour
     /// </summary>
     private void OnEnable()
     {
+        print(timeframeValuesStorage.toValue);
         EditorApplication.playModeStateChanged += ResetStorages;
     }
 
@@ -27,9 +29,10 @@ public class ResetStorage : MonoBehaviour
     private void ResetStorages(PlayModeStateChange state)
     {
         if (state != PlayModeStateChange.EnteredEditMode) return;
-        storage.ResetStorage();
-        imagesAndVideosStorage.ResetStorage();
+        storage.Reset();
+        imagesAndVideosStorage.Reset();
         gameIds.Reset();
         showHideTimelineTimeframe.Reset();
+        timeframeValuesStorage.Reset();
     }
 }

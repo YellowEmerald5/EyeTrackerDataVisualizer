@@ -44,7 +44,7 @@ namespace ScriptableObjects
         /// <summary>
         /// Removes all selected images and videos from the scriptable object. Not used outside the editor
         /// </summary>
-        public void ResetStorage()
+        public void Reset()
         {
             SelectedImages = new List<Texture2D>();
             SelectedVideo = null;

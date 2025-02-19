@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using ScriptableObjects;
 using UnityEngine;
 
 namespace ReplayControls
@@ -8,6 +9,7 @@ namespace ReplayControls
     {
         public Dictionary<float, List<GameObject>> PointsInTime = new ();
         public Dictionary<float, List<GameObject>> GazePointsInTime = new ();
+        public TimeframeValuesStorage storage;
 
         public void AddObjectPoint(long pointInTime, GameObject visualPoint)
         {
@@ -33,8 +35,11 @@ namespace ReplayControls
             }
         }
 
-        public void HidePoints(float start, float end)
+        public void HidePoints()
         {
+            var start = storage.fromValue;
+            var end = storage.toValue;
+            
             foreach (var points in PointsInTime.Where(pair => pair.Key < start || pair.Key > end))
             {
                 foreach (var point in points.Value)
