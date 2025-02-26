@@ -9,6 +9,9 @@ namespace ScriptableObjects
     {
         public Dictionary<int,bool> IdAndStateStorage = new ();
         
+        /// <summary>
+        /// Sets the dictionary to be empty
+        /// </summary>
         public void Reset()
         {
             IdAndStateStorage = new Dictionary<int, bool>();

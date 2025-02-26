@@ -4,31 +4,42 @@ using System.Collections.Generic;
 using ScriptableObjects;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class TimeframeValues : MonoBehaviour
 {
-    public float maxValue;
-    public float minValue;
+    public float toValue;
+    public float fromValue;
     public float minimumValue;
     public float maximumValue;
     public TMP_Text errorMessage;
     public bool integer;
     public TimeframeValuesStorage storage;
 
-    public void ChangeBothValues(string smallestValue, string biggestValue)
+    /// <summary>
+    /// Changes both minimum and maximum value
+    /// </summary>
+    /// <param name="smallestValue">Start value of the lists</param>
+    /// <param name="biggestValue">Length of the timestamps list</param>
+    public void ChangeBothValuesWithStrings(string smallestValue, string biggestValue)
     {
         ChangeMaxValueWithString(biggestValue);
         ChangeMinValueWithString(smallestValue);
-        storage.UpdateBothValues(minValue,maxValue);
+        storage.UpdateBothValues(fromValue,toValue);
     }
+    
+    /// <summary>
+    /// Takes a string and changes to value with it
+    /// </summary>
+    /// <param name="input">String to parse</param>
     public void ChangeMaxValueWithString(string input)
     {
-        var currentValue = maxValue;
+        var currentValue = toValue;
         if (integer)
         {
             try
             {
-                maxValue = int.Parse(input);
+                toValue = int.Parse(input);
             }
             catch (FormatException e)
             {
@@ -41,7 +52,7 @@ public class TimeframeValues : MonoBehaviour
         {
             try
             {
-                maxValue = float.Parse(input);
+                toValue = float.Parse(input);
             }
             catch (FormatException e)
             {
@@ -51,39 +62,43 @@ public class TimeframeValues : MonoBehaviour
             }
         }
         
-        if (minValue > maxValue)
+        if (fromValue > toValue)
         {
-            maxValue = currentValue;
+            toValue = currentValue;
             errorMessage.text = "Max value cannot be less than min value";
             return;
         }
 
-        if (maxValue > maximumValue)
+        if (toValue > maximumValue)
         {
-            maxValue = currentValue;
+            toValue = currentValue;
             errorMessage.text = "Max value cannot be greater than maximum value";
             return;
         }
         
-        if (maxValue < minimumValue)
+        if (toValue < minimumValue)
         {
-            maxValue = currentValue;
+            toValue = currentValue;
             errorMessage.text = "Max value cannot be less than minimum value";
             return;
         }
         
         ResetText();
-        storage.UpdateToValue(maxValue);
+        storage.UpdateToValue(toValue);
     }
     
+    /// <summary>
+    /// Takes a string and changes from value with it
+    /// </summary>
+    /// <param name="input">String to parse</param>
     public void ChangeMinValueWithString(string input)
     {
-        var currentValue = minValue;
+        var currentValue = fromValue;
         if (integer)
         {
             try
             {
-                minValue = int.Parse(input);
+                fromValue = int.Parse(input);
             }
             catch (FormatException e)
             {
@@ -96,7 +111,7 @@ public class TimeframeValues : MonoBehaviour
         {
             try
             {
-                maxValue = float.Parse(input);
+                toValue = float.Parse(input);
             }
             catch (FormatException e)
             {
@@ -106,31 +121,34 @@ public class TimeframeValues : MonoBehaviour
             }
         }
         
-        if (minValue > maximumValue)
+        if (fromValue > maximumValue)
         {
-            minValue = currentValue;
+            fromValue = currentValue;
             errorMessage.text = "Min value cannot be greater than maximum value";
             return;
         }
 
-        if (minValue > maxValue)
+        if (fromValue > toValue)
         {
-            minValue = currentValue;
+            fromValue = currentValue;
             errorMessage.text = "Min value cannot be greater than max value";
             return;
         }
         
-        if (minValue < minimumValue)
+        if (fromValue < minimumValue)
         {
-            minValue = currentValue;
+            fromValue = currentValue;
             errorMessage.text = "Min value cannot be less than minimum value";
             return;
         }
         
         ResetText();
-        storage.UpdateFromValue(minValue);
+        storage.UpdateFromValue(fromValue);
     }
 
+    /// <summary>
+    /// Resets the error message
+    /// </summary>
     private void ResetText()
     {
         errorMessage.text = "";

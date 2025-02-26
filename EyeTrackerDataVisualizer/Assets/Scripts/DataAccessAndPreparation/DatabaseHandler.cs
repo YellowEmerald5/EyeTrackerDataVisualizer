@@ -69,7 +69,7 @@ namespace DataAccessAndPreparation
             foreach (var session in selectedSessions)
             {
                 games.AddRange( dataConnection.GetTable<Game>()
-                    .Select(g => new Game(g.TimesPlayed, g.AmountOfGamesPlayed, g.Name, g.UserId, g.SessionId))
+                    .Select(g => new Game(g.TimesPlayed, g.AmountOfGamesPlayed, g.Name, g.UserId, g.SessionId, g.WindowHeight,g.WindowWidth))
                     .Where(g => g.SessionId == session.Id)
                     .ToList());
             }

@@ -12,7 +12,7 @@ namespace ReplayControls
         public List<Vector3> positions;
         
         /// <summary>
-        /// Moves the gaze object to the position for the time stamp
+        /// Moves the gaze object to a new position
         /// </summary>
         public void MoveGazeObject()
         {

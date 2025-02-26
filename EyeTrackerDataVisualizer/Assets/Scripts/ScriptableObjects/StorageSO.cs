@@ -51,6 +51,9 @@ namespace ScriptableObjects
             StartEndGazePoints = new Dictionary<long, Tuple<int, int>>();
         }
 
+        /// <summary>
+        /// Changes show destroyed to the opposite value
+        /// </summary>
         public void ChangeShowDestroyed()
         {
             ShowDestroyed = !ShowDestroyed;

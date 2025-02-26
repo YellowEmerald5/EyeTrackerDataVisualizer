@@ -13,6 +13,9 @@ namespace ScriptsForImagesAndVideos
         [SerializeField] private ImagesAndVideosStorage storage;
         [SerializeField] private TMP_Dropdown dropdown;
 
+        /// <summary>
+        /// Loads the videos into the video dropdown for selection
+        /// </summary>
         private void Start()
         {
             storage.SelectedVideo = storage.Videos.First();
@@ -22,6 +25,10 @@ namespace ScriptsForImagesAndVideos
             }
         }
 
+        /// <summary>
+        /// Adds the selected video to the storage
+        /// </summary>
+        /// <param name="value"></param>
         public void SelectedVideo(int value)
         {
             storage.SelectVideo(value-1);

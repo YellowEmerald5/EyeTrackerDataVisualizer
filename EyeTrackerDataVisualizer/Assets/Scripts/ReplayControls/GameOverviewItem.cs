@@ -20,7 +20,6 @@ namespace ReplayControls
         {
             GetComponentInChildren<Image>().color = color;
             GetComponentInChildren<TMP_Text>().text = gameName;
-            //GetComponentInChildren<Toggle>().onValueChanged.AddListener();
         }
     }
 }

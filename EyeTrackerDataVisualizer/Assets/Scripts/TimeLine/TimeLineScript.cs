@@ -75,6 +75,9 @@ namespace TimeLine
 
         }
 
+        /// <summary>
+        /// Pauses the timeline when timeframe representation is selected
+        /// </summary>
         public void ChangedRepresentationStyle()
         {
             _timePeriod = !_timePeriod;

@@ -11,6 +11,11 @@ namespace ReplayControls
         public Dictionary<float, List<GameObject>> GazePointsInTime = new ();
         public TimeframeValuesStorage storage;
 
+        /// <summary>
+        /// Adds a single position to the points in time dictionary
+        /// </summary>
+        /// <param name="pointInTime">Timestamp for the position</param>
+        /// <param name="visualPoint">Game object representing the object</param>
         public void AddObjectPoint(long pointInTime, GameObject visualPoint)
         {
             if (PointsInTime.ContainsKey(pointInTime))
@@ -23,6 +28,11 @@ namespace ReplayControls
             }
         }
 
+        /// <summary>
+        /// Adds a single gaze point to the gaze points in time dictionary
+        /// </summary>
+        /// <param name="timeValue">Timestamp for the gaze point</param>
+        /// <param name="gazePoint">Game object representing the gaze point</param>
         public void AddGazePoint(long timeValue, GameObject gazePoint)
         {
             if (GazePointsInTime.ContainsKey(timeValue))
@@ -35,6 +45,9 @@ namespace ReplayControls
             }
         }
 
+        /// <summary>
+        /// Hides all points outside of the timeframe range and shows all points inside the range
+        /// </summary>
         public void HidePoints()
         {
             var start = storage.fromValue;

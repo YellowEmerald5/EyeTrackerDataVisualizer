@@ -11,11 +11,17 @@ namespace ScriptsForImagesAndVideos
         public Image display;
         private int _i;
 
+        /// <summary>
+        /// Sets the first image in the overlay
+        /// </summary>
         public void Begin()
         {
             display.sprite = images[_i];
         }
 
+        /// <summary>
+        /// Changes to the next image in the list
+        /// </summary>
         public void NextImage()
         {
             if (_i >= images.Count-1) return;
@@ -23,6 +29,10 @@ namespace ScriptsForImagesAndVideos
             display.sprite = images[_i];
         }
 
+        
+        /// <summary>
+        /// Changes to the previous image in the list
+        /// </summary>
         public void PreviousImage()
         {
             if (_i <= 0) return;

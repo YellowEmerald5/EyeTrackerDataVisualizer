@@ -23,6 +23,9 @@ namespace ScriptsForImagesAndVideos
         [SerializeField] private GameEvent previousImage;
         [SerializeField] private Slider transparencySlider;
         
+        /// <summary>
+        /// Prepares the images in the images and videos storage
+        /// </summary>
         private void Start()
         {
             if (storage.SelectedVideo != null)
@@ -64,6 +67,12 @@ namespace ScriptsForImagesAndVideos
             AddGameEventListener(image,previousImage,control.PreviousImage);
         }
 
+        /// <summary>
+        /// Adds and sets up a game event listener to an object
+        /// </summary>
+        /// <param name="obj">Object that should have the game event listener</param>
+        /// <param name="gameEvent">The game event to listen to</param>
+        /// <param name="action">Action to perform when the event is raised</param>
         private static void AddGameEventListener(GameObject obj, GameEvent gameEvent,UnityAction action)
         {
             var listener = obj.AddComponent<GameEventListener>();

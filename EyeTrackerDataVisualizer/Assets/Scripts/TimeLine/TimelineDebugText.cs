@@ -8,7 +8,7 @@ namespace TimeLine
         [SerializeField] private TMP_Text textElement;
     
         /// <summary>
-        /// Displays the value of the the slider in a text object
+        /// Displays the value of a slider in a text object
         /// </summary>
         /// <param name="value">Value of the slider</param>
         public void ChangeValue(float value)

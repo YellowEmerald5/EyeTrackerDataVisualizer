@@ -39,12 +39,11 @@ namespace ObjectRepresentation
             if ((int)storage.CurrentTimestamp == startPosition)
             {
                 transform.position = _pointsInWorld[0];
-                print(_pointsInWorld[0]);
             }
         }
 
         /// <summary>
-        /// Moves the object to the given point based on the timestamp
+        /// Moves the object to the given point based on the timestamp and hides the object if it is destroyed and show destroyed is unchecked
         /// </summary>
         public void MoveObject()
         {
@@ -62,6 +61,10 @@ namespace ObjectRepresentation
             if (currentTimestamp > _pointsInWorld.Count - 1) return;
             transform.position = _pointsInWorld[(int) currentTimestamp-startPosition];
         }
+        
+        /// <summary>
+        /// Enables or disables the object mesh
+        /// </summary>
 
         public void HideObject()
         {

@@ -8,10 +8,12 @@ namespace ReplayControls
     public class GameVisibilityControl : MonoBehaviour
     {
         private readonly Dictionary<int,List<GameObject>> _objectsToHide = new ();
-        public GameIdsForVisibility gameIdsStorage;
         public ShowHideTimelineTimeframe showHide;
         public bool TimeType; // false = timeline. true = timeframes
 
+        /// <summary>
+        /// Shows or hides all game objects in objects to hide
+        /// </summary>
         public void ShowHideAll()
         {
             var active = TimeType == false ? showHide.showTimeline : showHide.showTimeframe;
@@ -24,6 +26,9 @@ namespace ReplayControls
             }
         }
 
+        /// <summary>
+        /// Shows or hides a single game
+        /// </summary>
         public void ShowHideGame()
         {
             var active = TimeType == false ? showHide.showTimeline : showHide.showTimeframe;
@@ -42,6 +47,11 @@ namespace ReplayControls
             }
         }
 
+        /// <summary>
+        /// Adds a game object to the objects to hide dictionary
+        /// </summary>
+        /// <param name="id">Id of the game</param>
+        /// <param name="obj">Object to add</param>
         public void AddGame(int id, GameObject obj)
         {
             if (!_objectsToHide.ContainsKey(id))

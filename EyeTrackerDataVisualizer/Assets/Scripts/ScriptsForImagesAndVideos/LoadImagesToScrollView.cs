@@ -12,7 +12,7 @@ namespace ScriptsForImagesAndVideos
         private const int Width = 75;
 
         /// <summary>
-        /// Creates buttons for the images in image and video storage and enters them in the scroll view;
+        /// Creates buttons for the images in image and video storage and enters them in the scroll view
         /// </summary>
         private void Start()
         {

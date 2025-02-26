@@ -28,7 +28,7 @@ namespace ObjectRepresentation
         
 
         /// <summary>
-        /// Completes the object setup
+        /// Sets up game event listeners and prepares the data for game objects and gaze objects
         /// </summary>
         private void Start()
         {
@@ -50,9 +50,6 @@ namespace ObjectRepresentation
 
             var timelineVisibilityControl = timelineObjects.AddComponent<GameVisibilityControl>();
             var timeframeVisibilityControl = timeframeObjects.AddComponent<GameVisibilityControl>();
-
-            timelineVisibilityControl.gameIdsStorage = gameIds;
-            timeframeVisibilityControl.gameIdsStorage = gameIds;
 
             timelineVisibilityControl.showHide = showHideTimelineTimeframe;
             timeframeVisibilityControl.showHide = showHideTimelineTimeframe;
@@ -84,6 +81,9 @@ namespace ObjectRepresentation
             listener.gameEvent = showHideGame;
             listener.RegisterListener();
             listener.response = gameEvent;
+
+            var windowHeight = Screen.height;
+            var windowWidth = Screen.width;
             
             var i = 0;
             for (var j = 0; j < storage.GameList.Count; j++)
@@ -106,13 +106,37 @@ namespace ObjectRepresentation
                 var toggle = listItem.GetComponentInChildren<Toggle>();
                 toggle.onValueChanged.AddListener(gameVisibilityToggle.AlterStateInStorage);
 
+                var gameWindowHeight = game.WindowHeight;
+                var gameWindowWidth = game.WindowWidth;
+                
+                float ratioHeight;
+                float ratioWidth;
+                
+                if (windowHeight <= gameWindowHeight)
+                {
+                    ratioHeight = windowHeight / gameWindowHeight;
+                }
+                else
+                {
+                    ratioHeight = gameWindowHeight / windowHeight;
+                }
+                
+                if (windowWidth <= gameWindowWidth)
+                {
+                    ratioWidth = windowWidth / gameWindowWidth;
+                }
+                else
+                {
+                    ratioWidth = gameWindowWidth / windowWidth;
+                }
+
                 var objectWorldPositions = new List<List<Vector3>>();
                 foreach (var obj in game.Objects)
                 {
                     var pointsInWorldCoords = new List<Vector3>();
                     foreach (var point in obj.Points)
                     {
-                        var pos = new Vector3(point.PosX, point.PosY, point.PosZ +300);
+                        var pos = new Vector3(point.PosX*ratioWidth, point.PosY*ratioHeight, point.PosZ +300);
                         var worldPos = storage.MainCamera.ScreenToWorldPoint(pos);
                         pointsInWorldCoords.Add(worldPos);
                     }
@@ -122,7 +146,7 @@ namespace ObjectRepresentation
                 var gazeWorldPositions = new List<Vector3>();
                 foreach (var gazePoint in storage.SensorData[i])
                 {
-                    var pos = new Vector3(gazePoint.PosX,gazePoint.PosY,200);
+                    var pos = new Vector3(gazePoint.PosX*ratioWidth,gazePoint.PosY*ratioHeight,200);
                     var worldPos = storage.MainCamera.ScreenToWorldPoint(pos);
                     gazeWorldPositions.Add(worldPos);
                 }
@@ -133,9 +157,17 @@ namespace ObjectRepresentation
             }
         }
 
+        /// <summary>
+        /// Prepares the timeline objects, sets up script for hiding them and starts spawning objects
+        /// </summary>
+        /// <param name="timelineObjects">Parent object for all timeline related objects</param>
+        /// <param name="timelineVisibilityControl">Script for controlling the visibility of all timeline objects when changing representation type</param>
+        /// <param name="color">The color the objects should have based on the game they belong to</param>
+        /// <param name="game">Data from the game containing the objects</param>
+        /// <param name="gameWorldPositions">Positions of the objects in game converted to world positions</param>
+        /// <param name="gazeWorldPositions">Positions of the gaze data related to the game converted to world positions</param>
         private void CreateTimelineObjects(GameObject timelineObjects, GameVisibilityControl timelineVisibilityControl, Color color, Game game, List<List<Vector3>> gameWorldPositions, List<Vector3> gazeWorldPositions)
         {
-            print("Called");
             var parentObject = new GameObject
             {
                 transform =
@@ -158,6 +190,16 @@ namespace ObjectRepresentation
             spawner.SpawnObjects(gameWorldPositions,gazeWorldPositions);
         }
 
+        /// <summary>
+        /// Prepares the timeframe objects, sets up script for hiding them and spawns the static objects
+        /// </summary>
+        /// <param name="timeframeObjects">Parent object for all timeframe related objects</param>
+        /// <param name="game">Data from the game containing the objects</param>
+        /// <param name="gameWorldPositions">Positions of the objects in game converted to world positions</param>
+        /// <param name="timeframeVisibilityControl">Script for controlling the visibility of all timeframe objects when changing representation type</param>
+        /// <param name="color">The color the objects should have based on the game they belong to</param>
+        /// <param name="gazeWorldPositions">Positions of the gaze data related to the game converted to world positions</param>
+        /// <param name="gameNumber">What game is currently being represented. Used for finding the related gaze points</param>
         private void CreateTimeframeObjects(GameObject timeframeObjects, Game game, List<List<Vector3>> gameWorldPositions, GameVisibilityControl timeframeVisibilityControl,Color color, List<Vector3> gazeWorldPositions, int gameNumber)
         {
             var parentObject = new GameObject

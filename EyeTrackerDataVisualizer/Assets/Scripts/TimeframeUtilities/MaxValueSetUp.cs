@@ -11,6 +11,9 @@ namespace TimeframeUtilities
         public TimeframeValues timeframe;
         public TMP_Text maxValue;
 
+        /// <summary>
+        /// Sets the max value in timeframe values and prints it to max value text
+        /// </summary>
         private void Start()
         {
             timeframe.maximumValue = storage.TotalTimestampEntries;

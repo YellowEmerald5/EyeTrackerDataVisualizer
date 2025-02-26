@@ -21,14 +21,12 @@ namespace ObjectRepresentation
         public Color color;
         
         /// <summary>
-        /// Spawns in and sets up the object representations and the gaze objects
+        /// Spawns in and sets up the object representations and the gaze objects for moving objects and gaze points
         /// </summary>
         public void SpawnObjects(List<List<Vector3>> objectWorldPositions,List<Vector3> gazeWorldPositions)
         { 
-            print(Game.Objects.Count);
             for (var i = 0; i < Game.Objects.Count; i++)
             {
-                print("spawning object");
                 var obj = Game.Objects[i];
                 var instance = Instantiate(instanceObject,gameObject.transform);
                 instance.SetActive(true);
