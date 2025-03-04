@@ -8,7 +8,7 @@ namespace TimeframeUtilities
     public class MaxValueSetUp : MonoBehaviour
     {
         public StorageSO storage;
-        public TimeframeValues timeframe;
+        public TimeframeValuesString timeframe;
         public TMP_Text maxValue;
 
         /// <summary>
