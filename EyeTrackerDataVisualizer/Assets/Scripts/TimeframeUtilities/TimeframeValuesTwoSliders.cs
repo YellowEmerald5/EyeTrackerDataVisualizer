@@ -14,7 +14,14 @@ namespace TimeframeUtilities
         [SerializeField] private StorageSO storage;
         [SerializeField] private TimeframeValuesStorage valuesStorage;
         [SerializeField] private GameEvent timeframeValueChanged;
+        [SerializeField] private GameObject fill;
+        [SerializeField] private RectTransform fillArea;
+        
         [SerializeField] private bool wholeNumbers;
+
+        private Vector3 _fillScale;
+        private float _width;
+        private float _widthFillArea;
         
         private void Start()
         {
@@ -25,6 +32,9 @@ namespace TimeframeUtilities
             }
             minSlider.maxValue = storage.TotalTimestampEntries;
             maxSlider.maxValue = storage.TotalTimestampEntries;
+            _width = minSlider.GetComponent<RectTransform>().rect.width;
+            _fillScale = fill.transform.localScale;
+            _width = fillArea.rect.width;
         }
 
         public void MinValueChanged()
@@ -34,6 +44,7 @@ namespace TimeframeUtilities
                 maxSlider.value = minSlider.value;
             }
             valuesStorage.UpdateFromValue(minSlider.value);
+            fill.transform.position = minSlider.handleRect.position;
             timeframeValueChanged.Raise();
         }
 
@@ -43,7 +54,11 @@ namespace TimeframeUtilities
             {
                 maxSlider.value = minSlider.value;
             }
+
+            //var difference = maxSlider.transform.position - minSlider.transform.position;
+            //var percentage = difference / _width;
             valuesStorage.UpdateToValue(maxSlider.value);
+            //fill.transform.localScale = new Vector3((percentage * _widthFillArea).x,_fillScale.y,_fillScale.z);
             timeframeValueChanged.Raise();
         }
     }
