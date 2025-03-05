@@ -34,7 +34,7 @@ namespace TimeframeUtilities
             maxSlider.maxValue = storage.TotalTimestampEntries;
             _width = minSlider.GetComponent<RectTransform>().rect.width;
             _fillScale = fill.transform.localScale;
-            _width = fillArea.rect.width;
+            _widthFillArea = fillArea.rect.width;
         }
 
         public void MinValueChanged()
@@ -44,7 +44,9 @@ namespace TimeframeUtilities
                 maxSlider.value = minSlider.value;
             }
             valuesStorage.UpdateFromValue(minSlider.value);
-            fill.transform.position = minSlider.handleRect.position;
+            var minHandlePosition = minSlider.handleRect.position;
+            fill.GetComponent<RectTransform>().anchorMax = new Vector2((maxSlider.handleRect.position.x/_widthFillArea)-(minHandlePosition.x/_widthFillArea), 1);
+            fill.transform.position = new Vector3(minHandlePosition.x + fill.GetComponent<RectTransform>().rect.width/2,minHandlePosition.y,minHandlePosition.z);
             timeframeValueChanged.Raise();
         }
 
@@ -54,11 +56,9 @@ namespace TimeframeUtilities
             {
                 maxSlider.value = minSlider.value;
             }
-
-            //var difference = maxSlider.transform.position - minSlider.transform.position;
-            //var percentage = difference / _width;
+            
+            fill.GetComponent<RectTransform>().anchorMax = new Vector2((maxSlider.handleRect.position.x/_widthFillArea)-(minSlider.handleRect.position.x/_widthFillArea), 1);
             valuesStorage.UpdateToValue(maxSlider.value);
-            //fill.transform.localScale = new Vector3((percentage * _widthFillArea).x,_fillScale.y,_fillScale.z);
             timeframeValueChanged.Raise();
         }
     }
