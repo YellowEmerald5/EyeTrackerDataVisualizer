@@ -27,6 +27,7 @@ namespace ScriptableObjects
         public bool ShowDestroyed = true;
         public List<Color> Colors = new ();
         public Dictionary<string, Tuple<int, int>> StartAndEndPoints = new ();
+        public bool twoD = true;
         
         /// <summary>
         /// Resets the values in storage. Not used outside of editor
@@ -49,6 +50,7 @@ namespace ScriptableObjects
             ShowDestroyed = true;
             StartAndEndPoints = new Dictionary<string, Tuple<int, int>>();
             StartEndGazePoints = new Dictionary<long, Tuple<int, int>>();
+            twoD = true;
         }
 
         /// <summary>

@@ -4,6 +4,7 @@ using Objects;
 using ReplayControls;
 using ScriptableObjects;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace ObjectRepresentation
 {
@@ -18,6 +19,7 @@ namespace ObjectRepresentation
         //private int i = 0;
         private bool _destroyed;
         public List<Vector3> _pointsInWorld;
+        private Image _image;
 
         private int timestampDifference;
 
@@ -26,18 +28,29 @@ namespace ObjectRepresentation
         /// </summary>
         public void Begin()
         {
-            _mesh = gameObject.GetComponent<MeshRenderer>();
-            /*var b = new Bounds
+            if(!storage.twoD){
+                _mesh = gameObject.GetComponent<MeshRenderer>();
+                /*var b = new Bounds
+                {
+                    size = new Vector3(Object.Aoi.Sizes[0].Width, Object.Aoi.Sizes[0].Height, 0)
+                };
+                _mesh.bounds = b;*/
+                var material = _mesh.material;
+                material.color = Color;
+                material.enableInstancing = true;
+                
+            }
+            else
             {
-                size = new Vector3(Object.Aoi.Sizes[0].Width, Object.Aoi.Sizes[0].Height, 0)
-            };
-            _mesh.bounds = b;*/
-            var material = _mesh.material;
-            material.color = Color;
-            material.enableInstancing = true;
+                _image = gameObject.GetComponent<Image>();
+                _image.color = Color;
+            }
+            
             timestampDifference = (int) storage.TotalTimestampEntries - startPosition;
+
             if ((int)storage.CurrentTimestamp == startPosition)
             {
+                print(_pointsInWorld);
                 transform.position = _pointsInWorld[0];
             }
         }
