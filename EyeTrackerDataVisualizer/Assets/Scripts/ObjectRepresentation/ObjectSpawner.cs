@@ -7,6 +7,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 namespace ObjectRepresentation
 {
@@ -24,14 +25,14 @@ namespace ObjectRepresentation
         /// Spawns in and sets up the object representations and the gaze objects for moving objects and gaze points
         /// </summary>
         public void SpawnObjects(List<List<Vector3>> objectWorldPositions,List<Vector3> gazeWorldPositions)
-        { 
+        {
             for (var i = 0; i < Game.Objects.Count; i++)
             {
                 var obj = Game.Objects[i];
                 var instance = Instantiate(instanceObject,gameObject.transform);
                 instance.SetActive(true);
                 var movementScript = instance.AddComponent<ObjectMovementAndResize>();
-                var startAndEnd = storage.StartAndEndPoints[obj.Name];
+                var startAndEnd = storage.StartAndEndPoints[obj.Id];
                 movementScript.startPosition = startAndEnd.Item1;
                 movementScript.endPosition = startAndEnd.Item2;
                 movementScript._pointsInWorld = objectWorldPositions[i];
@@ -60,8 +61,10 @@ namespace ObjectRepresentation
             var gazeObjectInstance = Instantiate(gazeObject,gameObject.transform);
             gazeObjectInstance.SetActive(true);
             var script = gazeObjectInstance.AddComponent<GazeManagingScript>();
-            var mesh = gazeObjectInstance.GetComponent<MeshRenderer>();
-            mesh.material.color = color;
+
+            var image = gazeObjectInstance.GetComponent<Image>();
+            image.color = color;
+            
             script.storage = storage;
             script.positions = gazeWorldPositions;
             var gameEventListener = script.AddComponent<GameEventListener>();

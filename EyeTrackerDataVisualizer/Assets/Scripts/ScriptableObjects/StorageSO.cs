@@ -11,10 +11,8 @@ namespace ScriptableObjects
     public class StorageSO : ScriptableObject
     {
         public List<User> TempUserList = new();
-        public List<Session> TempSessionList = new();
         public List<Game> TempGameList = new();
         public List<User> UserList = new();
-        public List<Session> SessionList = new();
         public List<Game> GameList = new();
         public MainMenuItemTypes CurrentItemType = MainMenuItemTypes.User;
         public float CurrentTimestamp;
@@ -26,7 +24,7 @@ namespace ScriptableObjects
         public bool SpeedChanged = false;
         public bool ShowDestroyed = true;
         public List<Color> Colors = new ();
-        public Dictionary<string, Tuple<int, int>> StartAndEndPoints = new ();
+        public Dictionary<int, Tuple<int, int>> StartAndEndPoints = new ();
         public bool twoD = true;
         
         /// <summary>
@@ -35,10 +33,8 @@ namespace ScriptableObjects
         public void Reset()
         {
             TempUserList = new List<User>();
-            TempSessionList = new List<Session>();
             TempGameList = new List<Game>();
             UserList = new List<User>();
-            SessionList = new List<Session>();
             GameList = new List<Game>();
             CurrentItemType = MainMenuItemTypes.User;
             MainCamera = null;
@@ -48,7 +44,7 @@ namespace ScriptableObjects
             SensorData = new List<List<sensor_et>>();
             SpeedChanged = false;
             ShowDestroyed = true;
-            StartAndEndPoints = new Dictionary<string, Tuple<int, int>>();
+            StartAndEndPoints = new Dictionary<int, Tuple<int, int>>();
             StartEndGazePoints = new Dictionary<long, Tuple<int, int>>();
             twoD = true;
         }

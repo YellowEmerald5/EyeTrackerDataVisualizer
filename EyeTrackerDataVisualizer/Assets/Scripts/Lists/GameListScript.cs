@@ -21,7 +21,7 @@ namespace Lists
             ResetScrollViewContent();
             storage.CurrentItemType = MainMenuItemTypes.Game;
             storage.TempGameList = new List<Game>();
-            storage.TempGameList = DatabaseHandler.GetGames(storage.SessionList);
+            storage.TempGameList = DatabaseHandler.GetGames(storage.UserList);
             foreach (var item in storage.TempGameList)
             {
                 var scrollViewItem = Instantiate(listItem, scrollViewContent.transform, false);

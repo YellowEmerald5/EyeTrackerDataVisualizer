@@ -6,10 +6,10 @@ namespace Objects
 {
     public class Aoi
     {
-        [PrimaryKey,Column(Length = 100)]
-        public string Id { get; set; }
-        [NotNull,Column(Length = 100)]
-        public string ObjectName { get; set; }
+        [PrimaryKey]
+        public int Id { get; set; }
+        [NotNull]
+        public int ObjectId { get; set; }
         [Nullable]
         public List<AoiOrigin> Origins { get; set; }
         [Nullable]
@@ -27,10 +27,9 @@ namespace Objects
         [NotNull]
         public float EndPositionY { get; set; }
         
-        public Aoi(string objectName,long timeSpawn,Vector3 position)
+        public Aoi(int objectId,long timeSpawn,Vector3 position)
         {
-            Id = objectName + " aoi";
-            ObjectName = objectName;
+            ObjectId = objectId;
             TimeSpawn = timeSpawn;
             StartPositionX = position.x;
             StartPositionY = position.y;
@@ -38,10 +37,10 @@ namespace Objects
             Sizes = new List<AoiSize>();
         }
         
-        public Aoi(string id, string objectName,long timeSpawn,float startPositionX, float startPositionY, long timeDestroy, float endPositionX, float endPositionY)
+        public Aoi(int id, int objectId,long timeSpawn,float startPositionX, float startPositionY, long timeDestroy, float endPositionX, float endPositionY)
         {
             Id = id;
-            ObjectName = objectName;
+            ObjectId = objectId;
             TimeSpawn = timeSpawn;
             StartPositionX = startPositionX;
             StartPositionY = startPositionY;

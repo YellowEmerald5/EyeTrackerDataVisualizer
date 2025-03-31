@@ -19,7 +19,7 @@ namespace Lists
         /// </summary>
         private void OnEnable()
         {
-            RemoveOldSessions();
+            /*RemoveOldSessions();
             _gameObjects = new List<GameObject>();
             storage.SessionList = new List<Session>();
             storage.CurrentItemType = MainMenuItemTypes.Session;
@@ -34,7 +34,7 @@ namespace Lists
                 var toggleLabel = addOrRemove.Label;
                 toggleLabel.text = "User: " + storage.UserList.FirstOrDefault(u => u.Id == item.UserId)?.Nickname +
                                    " Session: " + item.SessionNumber;
-            }
+            }*/
         }
 
         /// <summary>

@@ -28,6 +28,7 @@ namespace ObjectRepresentation
         /// </summary>
         public void Begin()
         {
+            gameObject.name = Object.Name;
             if(!storage.twoD){
                 _mesh = gameObject.GetComponent<MeshRenderer>();
                 /*var b = new Bounds
@@ -50,8 +51,15 @@ namespace ObjectRepresentation
 
             if ((int)storage.CurrentTimestamp == startPosition)
             {
-                print(_pointsInWorld);
-                transform.position = _pointsInWorld[0];
+                if (storage.twoD)
+                {
+                    transform.localPosition = _pointsInWorld[0];
+                }
+                else
+                {
+                    transform.position = _pointsInWorld[0];
+                }
+                
             }
         }
 
@@ -71,8 +79,16 @@ namespace ObjectRepresentation
                 return;
             }
             if (currentTimestamp < startPosition || currentTimestamp > endPosition) return;
-            if (currentTimestamp > _pointsInWorld.Count - 1) return;
-            transform.position = _pointsInWorld[(int) currentTimestamp-startPosition];
+            if (currentTimestamp - startPosition > _pointsInWorld.Count - 1) return;
+            if (storage.twoD)
+            {
+                transform.localPosition = _pointsInWorld[(int)currentTimestamp - startPosition];
+            }
+            else
+            {
+                transform.position = _pointsInWorld[(int)currentTimestamp - startPosition];
+            }
+                
         }
         
         /// <summary>
@@ -82,7 +98,14 @@ namespace ObjectRepresentation
         public void HideObject()
         {
             if (!_destroyed) return;
-            _mesh.enabled = storage.ShowDestroyed;
+            if (!storage.twoD)
+            {
+                _mesh.enabled = storage.ShowDestroyed;
+            }
+            else
+            {
+                _image.enabled = storage.ShowDestroyed;
+            }
         }
     }
 }

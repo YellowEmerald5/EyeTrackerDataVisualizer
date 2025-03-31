@@ -28,9 +28,6 @@ namespace Lists
                     case MainMenuItemTypes.User:
                         Storage.UserList.Add(User);
                         break;
-                    case MainMenuItemTypes.Session:
-                        Storage.SessionList.Add(Session);
-                        break;
                     case MainMenuItemTypes.Game:
                         Storage.GameList.Add(Game);
                         break;
@@ -43,9 +40,6 @@ namespace Lists
                 {
                     case MainMenuItemTypes.User:
                         Storage.UserList.Remove(User);
-                        break;
-                    case MainMenuItemTypes.Session:
-                        Storage.SessionList.Remove(Session);
                         break;
                     case MainMenuItemTypes.Game:
                         Storage.GameList.Remove(Game);

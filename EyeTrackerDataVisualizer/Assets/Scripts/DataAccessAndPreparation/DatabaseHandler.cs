@@ -32,45 +32,20 @@ namespace DataAccessAndPreparation
         }
 
         /// <summary>
-        /// Fetches sessions belonging to the chosen users from the database
-        /// </summary>
-        /// <param name="chosenUsers">Users chosen for replay</param>
-        /// <returns>List of sessions</returns>
-        public static List<Session> GetSessions(List<User> chosenUsers)
-        {
-            if (chosenUsers.Count == 0) return new List<Session>();
-            var dataConnection = GetDataConnection();
-            var listSessions = new List<Session>();
-            foreach (var user in chosenUsers)
-            {
-                var sessions = dataConnection.GetTable<Session>().Where(s => s.UserId == user.Id)
-                    .Select(s =>
-                        new Session(s.Id, s.SessionNumber, s.UserId))
-                    .ToList();
-                user.Sessions = new List<Session>();
-                user.Sessions.AddRange(sessions);
-                listSessions.AddRange(sessions);
-            }
-
-            dataConnection.Dispose();
-            return listSessions;
-        }
-
-        /// <summary>
         /// Fetches games belonging to the chosen sessions from the database 
         /// </summary>
         /// <param name="selectedSessions">List of selected sessions</param>
         /// <returns>List of games</returns>
-        public static List<Game> GetGames(List<Session> selectedSessions)
+        public static List<Game> GetGames(List<User> selectedUsers)
         {
-            if (selectedSessions.Count == 0) return new List<Game>();
+            if (selectedUsers.Count == 0) return new List<Game>();
             var dataConnection = GetDataConnection();
             var games = new List<Game>();
-            foreach (var session in selectedSessions)
+            foreach (var user in selectedUsers)
             {
                 games.AddRange( dataConnection.GetTable<Game>()
-                    .Select(g => new Game(g.TimesPlayed, g.AmountOfGamesPlayed, g.Name, g.UserId, g.SessionId, g.WindowHeight,g.WindowWidth))
-                    .Where(g => g.SessionId == session.Id)
+                    .Select(g => new Game(g.Id,g.AmountOfTimesPlayed, g.Name, g.UserId, g.WindowHeight,g.WindowWidth))
+                    .Where(g => g.UserId == user.Id)
                     .ToList());
             }
             
@@ -89,12 +64,12 @@ namespace DataAccessAndPreparation
             var timestamps = new List<long>();
             var sensorData = new List<List<sensor_et>>();
             var totalTimestamps = 0;
-            var startAndEndPoints = new Dictionary<string,Tuple<int,int>>();
+            var startAndEndPoints = new Dictionary<int,Tuple<int,int>>();
             var startEndGazePoints = new Dictionary<long, Tuple<int, int>>();
             foreach (var game in games)
             {
                 game.Objects = dataConnection.GetTable<ObjectInGame>().Select(o =>
-                        new ObjectInGame(o.Name, o.GameId, o.TimeSpawn, o.SpawnPositionX,
+                        new ObjectInGame(o.Id,o.Name, o.GameId, o.TimeSpawn, o.SpawnPositionX,
                             o.SpawnPositionY,
                             o.SpawnPositionZ, o.TimeDestroyed, o.EndPositionX, o.EndPositionY, o.EndPositionZ))
                     .Where(o => o.GameId == game.Id).ToList();
@@ -106,21 +81,27 @@ namespace DataAccessAndPreparation
                 var gameEnd = 0L;
                 foreach (var obj in game.Objects)
                 {
-                    obj.Aoi = dataConnection.GetTable<Aoi>().Select(a => new Aoi(a.Id, a.ObjectName, a.TimeSpawn,
-                        a.StartPositionX, a.StartPositionY, a.TimeDestroy, a.EndPositionX, a.EndPositionY)).FirstOrDefault(a => a.ObjectName.Equals(obj.Name));
-                    obj.Aoi.Sizes = dataConnection.GetTable<AoiSize>()
-                        .Select(s => new AoiSize(s.Id, s.AoiId, s.Height, s.Width))
-                        .Where(s => s.AoiId.Equals(obj.Aoi.Id)).ToList();
-                    obj.Aoi.Origins = dataConnection.GetTable<AoiOrigin>()
-                        .Select(o => new AoiOrigin(o.Id,o.AoiId,o.PosX,o.PosY))
-                        .Where(o => o.AoiId.Equals(obj.Aoi.Id)).ToList();
-                    obj.Points = dataConnection.GetTable<Point>()
-                        .Select(p => new Point(p.Id, p.ObjectName, p.Time, p.PosX, p.PosY, p.PosZ))
-                        .Where(p => p.ObjectName.Equals(obj.Name)).ToList();
-
-                    foreach (var point in obj.Points.Where(point => !timestamps.Contains(point.Time)))
+                    obj.Aoi = dataConnection.GetTable<Aoi>().Select(a => new Aoi(a.Id, a.ObjectId, a.TimeSpawn,
+                        a.StartPositionX, a.StartPositionY, a.TimeDestroy, a.EndPositionX, a.EndPositionY)).FirstOrDefault(a => a.ObjectId == obj.Id);
+                    if (obj.Aoi != null)
                     {
-                        timestamps.Add(point.Time);
+                        obj.Aoi.Sizes = dataConnection.GetTable<AoiSize>()
+                            .Select(s => new AoiSize(s.Id, s.AoiId, s.Height, s.Width))
+                            .Where(s => s.AoiId == obj.Aoi.Id).ToList();
+                        obj.Aoi.Origins = dataConnection.GetTable<AoiOrigin>()
+                            .Select(o => new AoiOrigin(o.Id,o.AoiId,o.PosX,o.PosY))
+                            .Where(o => o.AoiId == obj.Aoi.Id).ToList();
+                    }
+                    
+                    obj.Points = dataConnection.GetTable<Point>()
+                        .Select(p => new Point(p.Id, p.ObjectId, p.Time, p.PosX, p.PosY, p.PosZ))
+                        .Where(p => p.ObjectId == obj.Id).ToList();
+
+                    var tempGameLength = new List<long>();
+                    
+                    foreach (var point in obj.Points)
+                    {
+                        tempGameLength.Add(point.Time);
                         if (point.Time < start)
                         {
                             start = point.Time;
@@ -149,11 +130,14 @@ namespace DataAccessAndPreparation
                     {
                         gameEnd = objectEndTime;
                     }
-                    timestamps.Sort();
-                    var objectStartPoint = timestamps.FindIndex(timestamp => timestamp == objectStartTime);
-                    var objectEndPoint = timestamps.FindIndex(timestamp => timestamp == objectEndTime);
-                    startAndEndPoints.Add(obj.Name,new Tuple<int, int>(objectStartPoint,objectEndPoint));
-
+                    tempGameLength.Sort();
+                    var objectStartPoint = tempGameLength.FindIndex(timestamp => timestamp == objectStartTime);
+                    var objectEndPoint = tempGameLength.FindIndex(timestamp => timestamp == objectEndTime);
+                    startAndEndPoints.Add(obj.Id,new Tuple<int, int>(objectStartPoint,objectEndPoint));
+                    if (tempGameLength.Count > totalTimestamps)
+                    {
+                        totalTimestamps = tempGameLength.Count;
+                    }
                 }
                 
                 sensorData.Add(new List<sensor_et>());
@@ -165,23 +149,22 @@ namespace DataAccessAndPreparation
                 }
                 catch (MySqlException e)
                 {
-                    sensorData[^1] = ReadFromCSV.GetSensorDataFromCSV().Where(d => d.Id_activity == 1121 && d.Validity.Equals("1")).ToList();
-                    Console.Write(e.ToString());
+                    /*sensorData[^1] = ReadFromCSV.GetSensorDataFromCSV().Where(d => d.Id_activity == 1121 && d.Validity.Equals("1")).ToList();
+                    Console.Write(e.ToString());*/
                 }
 
-                for (var i = 0; i < sensorData.Count; i++)
+                var tempGazeTimeStamps = new List<long>();
+                foreach (var t1 in sensorData.SelectMany(t => t.Where(t1 => !tempGazeTimeStamps.Contains(t1.Timestamp))))
                 {
-                    for (var k = 0; k < sensorData[i].Count; k++)
-                    {
-                        if (!timestamps.Contains(sensorData[i][k].Timestamp))
-                        {
-                            timestamps.Add(sensorData[i][k].Timestamp);
-                        }
-                    }
+                    tempGazeTimeStamps.Add(t1.Timestamp);
                 }
-
+                if (tempGazeTimeStamps.Count > totalTimestamps)
+                {
+                    totalTimestamps = tempGazeTimeStamps.Count;
+                }
                 if (sensorData[^1].Count > 0)
                 {
+                    Debug.Log("Adding gaze start and end");
                     timestamps.Sort();
                     var gazeStartPoint = timestamps.FindIndex(timestamp => timestamp == sensorData[^1][0].Timestamp);
                     var gazeEndPoint = timestamps.FindIndex(timestamp => timestamp == sensorData[^1][^1].Timestamp);
@@ -189,7 +172,7 @@ namespace DataAccessAndPreparation
                             new Tuple<int, int>(gazeStartPoint, gazeEndPoint));
                 }
             }
-            totalTimestamps = timestamps.Count-1;
+            totalTimestamps --;
             return new PreparedData(games,startEndGazePoints,startAndEndPoints,sensorData,totalTimestamps);
         }
 

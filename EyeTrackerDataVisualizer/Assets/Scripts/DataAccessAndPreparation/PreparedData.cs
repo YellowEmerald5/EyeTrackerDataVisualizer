@@ -9,7 +9,7 @@ namespace DataAccessAndPreparation
         public List<Game> PreparedGames { get; set; }
         public Dictionary<long,Tuple<int,int>> StartEndGazePoints { get; set; }
         public List<List<sensor_et>> SensorData { get; set; }
-        public Dictionary<string,Tuple<int,int>> StartAndEndPoints { get; set; }
+        public Dictionary<int,Tuple<int,int>> StartAndEndPoints { get; set; }
         public float TotalTimestamps { get; set; }
 
         /// <summary>
@@ -19,7 +19,7 @@ namespace DataAccessAndPreparation
         /// <param name="timeStamps">List of unique timestamps</param>
         /// <param name="sensorData">Data points from eye tracker</param>
         /// <param name="totalTimestamps">Total amount of timestamps</param>
-        public PreparedData(List<Game> games, Dictionary<long,Tuple<int,int>> startAndEndGazePoints, Dictionary<string,Tuple<int,int>> startAndEndPoints, List<List<sensor_et>> sensorData, float totalTimestamps)
+        public PreparedData(List<Game> games, Dictionary<long,Tuple<int,int>> startAndEndGazePoints, Dictionary<int,Tuple<int,int>> startAndEndPoints, List<List<sensor_et>> sensorData, float totalTimestamps)
         {
             PreparedGames = games;
             StartEndGazePoints = startAndEndGazePoints;

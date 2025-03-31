@@ -17,7 +17,7 @@ namespace ReplayControls
         public void MoveGazeObject()
         {
             if (storage.SensorData.Count == 0 || storage.CurrentTimestamp >= positions.Count) return;
-            transform.position = positions[(int)storage.CurrentTimestamp];
+            transform.localPosition = positions[(int)storage.CurrentTimestamp];
         }
     }
 }
